@@ -1,0 +1,78 @@
+<main class="bun">
+  <div class="ticker" aria-label="Freshly smashed, never overthought">FRESHLY SMASHED&nbsp; ✳ &nbsp;NEVER OVERTHOUGHT&nbsp; ✳ &nbsp;GOOD THINGS BETWEEN BUNS&nbsp; ✳ &nbsp;FRESHLY SMASHED&nbsp; ✳</div>
+  <header class="header">
+    <button class="mobile-menu" type="button" aria-label="Toggle navigation" aria-controls="bun-nav" [attr.aria-expanded]="menuOpen" (click)="menuOpen = !menuOpen">☰</button>
+    <a class="brand" routerLink="/">BUN<br>THEORY<span>®</span></a>
+    <nav id="bun-nav" [class.open]="menuOpen" aria-label="Main navigation"><a href="#menu" (click)="menuOpen = false">THE MENU</a><a href="#about" (click)="menuOpen = false">OUR THING</a><a href="#visit" (click)="menuOpen = false">FIND US</a></nav>
+    <button class="order-button" type="button" (click)="orderOpen = true">ORDER NOW <span>({{ order.length }})</span></button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy"><span class="eyebrow">BURGERS, WITH A POINT OF VIEW.</span><h1>Less talk.<br><i>More sauce.</i></h1><p>Really good burgers. Really good people. No long origin story.</p><a href="#menu" class="button-link">SEE WHAT'S COOKING <span>↘</span></a><span class="hero-foot">SMASHED FRESH. NEVER FROZEN. ALWAYS EXTRA NAPKINS.</span></div>
+    <div class="hero-image" role="img" aria-label="A double cheeseburger piled high with crisp lettuce and sauce"><span class="sticker">100%<br>NO<br>BIG DEAL</span></div>
+  </section>
+
+  <section class="menu-section" id="menu">
+    <div class="menu-title"><div><span class="eyebrow">THE IMPORTANT PART</span><h2>Menu, meet<br><i>appetite.</i></h2></div><p>LOCAL INGREDIENTS. BIG FLAVOR.<br>ZERO COMPLICATED MATH.</p></div>
+    <div class="filters" aria-label="Filter menu">
+      @for (category of categories; track category) {
+        <button type="button" [class.active]="activeCategory === category" (click)="activeCategory = category">{{ category }}</button>
+      }
+    </div>
+    <div class="menu-grid">
+      @for (item of visibleMenu; track item.name) {
+        <article class="menu-item">
+          <div class="item-image"><img [src]="'https://images.unsplash.com/' + item.image + '?auto=format&fit=crop&w=850&q=85'" [alt]="item.name" loading="lazy">
+            @if (item.tag) { <span>{{ item.tag }}</span> }
+          </div>
+          <div class="item-title"><h3>{{ item.name }}</h3><strong>${{ item.price }}</strong></div>
+          <p>{{ item.description }}</p>
+          <button type="button" (click)="configureItem(item)">{{ item.category === 'BURGERS' ? 'MAKE IT YOURS' : 'ADD TO ORDER' }} <b>+</b></button>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="about" id="about"><div class="about-image" role="img" aria-label="Friends sharing a casual meal together"></div><div class="about-copy"><span class="eyebrow">NO SECRET FORMULA</span><h2>Just good<br>ingredients<br><i>doing their thing.</i></h2><p>We take the classics seriously enough to make them right, but not so seriously that you can't put fries on your burger.</p><a href="#visit">A LITTLE MORE ABOUT US ↗</a></div></section>
+  <section class="visit" id="visit"><span class="eyebrow">COME HUNGRY</span><h2>We'll keep<br>the lights on.</h2><div class="visit-info"><p>18 Orchard Street<br>New York, NY 10002</p><p>EVERY DAY · 11 AM—10 PM<br>WALK-INS VERY WELCOME</p></div><a href="#menu">SEE YOU SOON ↗</a></section>
+  <footer><a routerLink="/">A PROJECT BY OAK&CODE ↗</a><span>GOOD BURGERS. GOOD NEIGHBORS.</span><a href="#menu">BACK TO THE TOP ↑</a></footer>
+
+  @if (orderOpen) {
+    <div class="overlay" (click)="orderOpen = false" (keydown.escape)="orderOpen = false">
+      <section class="order-panel" role="dialog" aria-modal="true" aria-labelledby="order-title" (click)="$event.stopPropagation()">
+        <div class="order-heading"><h2 id="order-title">{{ orderConfirmed ? 'You got it.' : 'The good stuff.' }}</h2><button type="button" aria-label="Close order panel" (click)="orderOpen = false">×</button></div>
+        @if (orderConfirmed) {
+          <p class="confirmation">Thanks for playing along. This is a portfolio demo, so no real order was placed.</p><button class="place-order" type="button" (click)="orderOpen = false">SOUNDS GOOD</button>
+        } @else if (order.length) {
+          @for (line of order; track $index) {
+            <div class="order-line"><span>{{ line.item.name }}@if (line.additions.length) { <small>{{ line.additions.join(', ') }}</small> }</span><span>${{ line.price }}</span></div>
+          }
+          <div class="order-total"><span>DEMO TOTAL</span><strong>${{ orderTotal }}</strong></div>
+          <p class="demo-message">Static demo only — checkout won't charge you or send an order.</p>
+          <button class="place-order" type="button" (click)="finishDemoOrder()">PLACE DEMO ORDER</button>
+        } @else {
+          <p class="confirmation">The menu's right over there. Find your new favorite.</p><button class="place-order" type="button" (click)="orderOpen = false">BACK TO THE MENU</button>
+        }
+      </section>
+    </div>
+  }
+  @if (selectedItem; as item) {
+    <div class="overlay" (click)="selectedItem = null">
+      <section class="order-panel configure-panel" role="dialog" aria-modal="true" aria-labelledby="configure-title" (click)="$event.stopPropagation()">
+        <div class="order-heading"><h2 id="configure-title">Make it yours.</h2><button type="button" aria-label="Close item configuration" (click)="selectedItem = null">×</button></div>
+        <p class="configure-description">{{ item.name }} · ${{ item.price }}<br>{{ item.description }}</p>
+        @if (item.category === 'BURGERS') {
+          <fieldset class="addition-list"><legend>MAKE IT EXTRA</legend>
+            @for (addition of additions; track addition.name) {
+              <label><span>{{ addition.name }} <small>+${{ addition.price }}</small></span><input type="checkbox" [checked]="selectedAdditions.includes(addition.name)" (change)="toggleAddition(addition.name)"></label>
+            }
+          </fieldset>
+        } @else {
+          <p class="confirmation">This one's good as it is. Add it straight to your demo order.</p>
+        }
+        <p class="demo-message">Your customizations are stored in this browser session only.</p>
+        <button class="place-order" type="button" (click)="addConfiguredItem()">ADD TO DEMO ORDER</button>
+      </section>
+    </div>
+  }
+</main>

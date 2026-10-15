@@ -1,0 +1,115 @@
+<main class="home">
+  <header class="topbar">
+    <a class="wordmark" routerLink="/" aria-label="Oak and Code home">oak<span>&</span>code<span class="mark">®</span></a>
+    <span class="top-note">INDEPENDENT DEVELOPMENT TEAM<br>BUILT AROUND YOUR NEEDS.</span>
+    <a class="top-link" href="#work">EXPLORE OUR WORK <span aria-hidden="true">↓</span></a>
+  </header>
+
+  <section class="intro">
+    <p class="eyebrow"><span class="status-dot"></span> AVAILABLE FOR SELECT PROJECTS — 2026</p>
+    <h1>We build what<br>your business<br>needs<span class="period">.</span></h1>
+    <p class="intro-description">Websites, applications, integrations, and custom digital solutions. Built around your requirements, powered by engineering, and designed to work.</p>
+    <div class="intro-aside">
+      <a href="#work" class="circle-link" aria-label="Explore our work">↘</a>
+      <a class="secondary-link" href="#capabilities">WHAT WE BUILD ↓</a>
+    </div>
+  </section>
+
+  <section class="work" id="work" aria-labelledby="work-title">
+    <div class="section-heading">
+      <h2 id="work-title">Built to do more<span>(04)</span></h2>
+      <span>WORKING DEMONSTRATIONS / 2026</span>
+    </div>
+    <div class="project-grid">
+      @for (project of projects; track project.number) {
+        <a class="project-card" [class]="project.className" [routerLink]="project.route">
+          <div class="project-image">
+            <img [src]="project.image" [alt]="project.imageAlt" loading="lazy">
+            <span class="project-index">{{ project.number }}</span>
+            <span class="open-project" aria-hidden="true">↗</span>
+          </div>
+          <div class="project-meta">
+            <h3>{{ project.name }}</h3>
+            <span>{{ project.type }}</span>
+          </div>
+          <div class="project-details">
+            <p>{{ project.description }}</p>
+            <ul aria-label="Capabilities demonstrated">
+              @for (capability of project.capabilities; track capability) { <li>{{ capability }}</li> }
+            </ul>
+            <span class="project-technology">{{ project.technology }}</span>
+            <span class="project-visit">VIEW WORKING PROJECT ↗</span>
+          </div>
+        </a>
+      }
+    </div>
+  </section>
+
+  <section class="capabilities" id="capabilities" aria-labelledby="capabilities-title">
+    <div class="section-heading">
+      <h2 id="capabilities-title">What we build<span>(07)</span></h2>
+      <span>CAPABILITIES, NOT LIMITS</span>
+    </div>
+    <p class="capabilities-intro">Your requirements set the direction. We bring the engineering to make it real.</p>
+    <ul class="capability-list">
+      @for (capability of capabilities; track capability; let i = $index) {
+        <li><span>0{{ i + 1 }}</span>{{ capability }}</li>
+      }
+    </ul>
+  </section>
+
+  <section class="approach" aria-labelledby="approach-title">
+    <div class="section-heading">
+      <h2 id="approach-title">From requirement to release<span>(05)</span></h2>
+      <span>AN ENGINEERING-LED APPROACH</span>
+    </div>
+    <ol class="approach-list">
+      @for (step of approach; track step.number) {
+        <li><span>{{ step.number }}</span><div><h3>{{ step.title }}</h3><p>{{ step.detail }}</p></div></li>
+      }
+    </ol>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <div class="section-heading">
+      <h2 id="contact-title">Tell us what you need<span>↗</span></h2>
+      <span>PROJECT ENQUIRY / LOCAL DEMO</span>
+    </div>
+    <p class="contact-intro">Have a business problem, a product idea, or a system that needs to work better? Give us the outline.</p>
+    <form #enquiryForm="ngForm" (ngSubmit)="submitEnquiry(enquiryForm)" novalidate>
+      <label for="enquiry-name">Name</label>
+      <input id="enquiry-name" name="name" [(ngModel)]="enquiry.name" required minlength="2" autocomplete="name" #nameField="ngModel">
+      @if (nameField.invalid && nameField.touched) { <small class="field-error">Enter your name (at least 2 characters).</small> }
+
+      <label for="enquiry-email">Email</label>
+      <input id="enquiry-email" name="email" type="email" [(ngModel)]="enquiry.email" required email autocomplete="email" #emailField="ngModel">
+      @if (emailField.invalid && emailField.touched) { <small class="field-error">Enter a valid email address.</small> }
+
+      <label for="enquiry-type">What do you need built?</label>
+      <select id="enquiry-type" name="projectType" [(ngModel)]="enquiry.projectType" required #typeField="ngModel">
+        <option value="" disabled>Select a project type</option>
+        <option>Website or web application</option>
+        <option>E-commerce or business platform</option>
+        <option>API or integration</option>
+        <option>Automation or AI-powered application</option>
+        <option>Something else</option>
+      </select>
+      @if (typeField.invalid && typeField.touched) { <small class="field-error">Choose a project type.</small> }
+
+      <label for="enquiry-description">A little about the project</label>
+      <textarea id="enquiry-description" name="description" [(ngModel)]="enquiry.description" required minlength="10" rows="5" #descriptionField="ngModel"></textarea>
+      @if (descriptionField.invalid && descriptionField.touched) { <small class="field-error">Add at least 10 characters so we have a starting point.</small> }
+
+      <button type="submit">SEND ENQUIRY <span>↗</span></button>
+      <p class="form-disclaimer">This static demo validates your details in the browser only. No information is sent or stored.</p>
+      @if (enquirySubmitted) { <p class="form-success" role="status">Thanks, {{ submittedEnquiryName }}. Your demo enquiry passed local validation; nothing was sent to a server.</p> }
+    </form>
+  </section>
+
+  <footer class="footer">
+    <a class="wordmark" routerLink="/">oak<span>&</span>code<span class="mark">®</span></a>
+    <span>WE BUILD WHAT YOUR BUSINESS NEEDS.</span>
+    <a href="#contact">START A PROJECT ↗</a>
+    <small>© OAK&CODE 2026</small>
+  </footer>
+</main>

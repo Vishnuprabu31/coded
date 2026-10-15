@@ -1,0 +1,86 @@
+<main class="afterhours">
+  <div class="topline"><span>INDEPENDENT MUSIC. COLLECTIVE ENERGY.</span><span>NEW YORK CITY · 2026</span></div>
+  <header class="header">
+    <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="afterhours-nav" [attr.aria-expanded]="menuOpen" (click)="menuOpen = !menuOpen">☰</button>
+    <a class="logo" routerLink="/">AFTER<span>HOURS</span><b>®</b></a>
+    <nav id="afterhours-nav" [class.open]="menuOpen" aria-label="Main navigation"><a href="#releases" (click)="menuOpen = false">LISTEN</a><a href="#lineup" (click)="menuOpen = false">THE LINEUP</a><a href="#about" (click)="menuOpen = false">THE FEELING</a><a href="#info" (click)="menuOpen = false">INFO</a></nav>
+    <button class="ticket-link" type="button" (click)="openTickets('AFTERHOURS 2026')">GET TICKETS <span>↗</span></button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content"><span class="eyebrow"><i></i> TWO NIGHTS. ONE CITY. NO CURFEW.</span><h1>THE NIGHT<br>IS <span>OURS.</span></h1><div class="event-callout"><strong>18—19<br>SEP</strong><span>PIER 36<br>NEW YORK CITY</span><a href="#lineup" aria-label="Explore the lineup">↓</a></div><p>Good music for people who feel it. An independent gathering from last light until whenever.</p><button type="button" class="hero-cta" (click)="openTickets('AFTERHOURS 2026')">FIND YOUR NIGHT <span>↗</span></button></div>
+    <div class="hero-art" role="img" aria-label="Live music crowd under ultraviolet lights"><span class="hero-art-note">FEEL<br>EVERYTHING<br>AFTER DARK</span><span class="hero-art-index">AH—026 / NYC</span></div>
+    <div class="hero-orbit" aria-hidden="true">GOOD THINGS HAPPEN AFTER HOURS ✳ GOOD THINGS HAPPEN AFTER HOURS ✳</div>
+  </section>
+
+  <section class="releases" id="releases" aria-labelledby="releases-title">
+    <div class="section-head"><div><span class="eyebrow">SOUNDTRACK FOR LATER.</span><h2 id="releases-title">THE<br><i>RELEASES.</i></h2></div><span class="section-mark">ORIGINAL<br>DEMO PREVIEWS</span></div>
+    <div class="release-grid">
+      @for (release of releases; track release.title; let i = $index) {
+        <button type="button" class="release-card" [class.active]="selectedRelease === i" [attr.aria-pressed]="selectedRelease === i" (click)="selectRelease(i)">
+          <img [src]="'https://images.unsplash.com/' + release.image + '?auto=format&fit=crop&w=800&q=85'" [alt]="release.title + ' release artwork'" loading="lazy">
+          <span class="release-title">{{ release.title }}</span><span class="release-subtitle">{{ release.subtitle }} · {{ release.year }}</span>
+        </button>
+      }
+    </div>
+    <div class="player" aria-label="Audio preview player">
+      <div class="player-current"><span class="eyebrow">NOW SELECTED</span><strong>{{ releases[selectedRelease].title }}</strong><small>{{ releases[selectedRelease].subtitle }}</small></div>
+      <button class="play-toggle" type="button" [attr.aria-label]="isPlaying ? 'Pause audio preview' : 'Play audio preview'" [attr.aria-pressed]="isPlaying" (click)="togglePreview()">{{ isPlaying ? 'Ⅱ' : '▶' }}</button>
+      <div class="player-timeline">
+        <label for="preview-position" class="visually-hidden">Audio preview position</label>
+        <input id="preview-position" type="range" min="0" [max]="previewLengthSeconds" step="0.1" [value]="playbackPosition" [attr.aria-valuetext]="formattedPosition + ' of ' + formattedDuration" (input)="seekPreview($event)">
+        <div><span>{{ formattedPosition }}</span><span>{{ formattedDuration }}</span></div>
+      </div>
+      <p class="audio-message" role="status">{{ audioMessage }}</p>
+    </div>
+  </section>
+
+  <section class="lineup" id="lineup">
+    <div class="section-head"><div><span class="eyebrow">YOUR PEOPLE ARE HERE.</span><h2>THE<br><i>LINEUP.</i></h2></div><span class="section-mark">18 — 19<br>SEPTEMBER 2026</span></div>
+    <div class="day-tabs" role="tablist" aria-label="Choose festival day">
+      @for (day of days; track day; let i = $index) {
+        <button type="button" role="tab" [attr.aria-selected]="activeDay === i" [class.active]="activeDay === i" (click)="activeDay = i">{{ day }} <span>↗</span></button>
+      }
+    </div>
+    <div class="artist-list">
+      @for (artist of lineups[activeDay]; track artist.name; let i = $index) {
+        <article class="artist">
+          <span class="artist-number">0{{ i + 1 }}</span><h3>{{ artist.name }}</h3><span class="artist-style">{{ artist.style }}</span><span class="artist-time">{{ artist.time }}</span><button type="button" [attr.aria-label]="'Reserve tickets for ' + artist.name" (click)="openTickets(artist.name)">↗</button>
+        </article>
+      }
+    </div>
+    <button class="all-tickets" type="button" (click)="openTickets(days[activeDay])">GET YOUR TICKETS <span>↗</span></button>
+  </section>
+
+  <section class="about" id="about"><div class="about-image" role="img" aria-label="Hands raised in a colorful live music crowd"></div><div class="about-copy"><span class="eyebrow">COME AS YOU ARE.</span><h2>Not just<br>another<br><i>night out.</i></h2><p>A little less looking at your phone. A little more losing your voice to your new favorite song. A temporary city built for the people in it.</p><a href="#info">THE AFTERHOURS FEELING ↗</a></div></section>
+  <section class="events" aria-labelledby="events-title">
+    <span class="eyebrow">PICK YOUR NIGHT.</span><h2 id="events-title">UP NEXT.</h2>
+    <div class="event-list">
+      @for (event of events; track event.date) {
+        <article><span>{{ event.date }}</span><h3>{{ event.title }}</h3><p>{{ event.detail }}</p><button type="button" (click)="openTickets(event.title)">TICKETS ↗</button></article>
+      }
+    </div>
+  </section>
+  <section class="info" id="info"><span class="eyebrow">SAVE THE DETAILS.</span><div class="info-row"><h2>WHERE</h2><p>PIER 36<br>299 South Street, New York</p><span>LOWER EAST SIDE / WATERFRONT</span></div><div class="info-row"><h2>WHEN</h2><p>FRIDAY 18 + SATURDAY 19 SEPTEMBER<br>DOORS AT 8 PM · MUSIC UNTIL LATE</p><span>18+ WITH VALID ID</span></div><div class="info-row"><h2>GOOD TO KNOW</h2><p>GETTING HERE IS EASY.<br>COMING HOME IS YOUR ADVENTURE.</p><button type="button" (click)="openTickets('AFTERHOURS 2026')">GET ON THE LIST ↗</button></div></section>
+  <footer><a routerLink="/">A DIGITAL WORLD BY OAK&CODE ↗</a><a href="#lineup">BACK TO THE TOP ↑</a><span>MEET YOU AFTER DARK.</span></footer>
+
+  @if (ticketOpen) {
+    <div class="ticket-overlay" (click)="ticketOpen = false" (keydown.escape)="ticketOpen = false">
+      <section class="ticket-panel" role="dialog" aria-modal="true" aria-labelledby="ticket-title" (click)="$event.stopPropagation()">
+        <div class="ticket-heading"><span class="eyebrow">AFTERHOURS / 2026</span><button type="button" aria-label="Close ticket panel" (click)="ticketOpen = false">×</button></div>
+        @if (reservationComplete) {
+          <h2 id="ticket-title">You're on<br><i>the list.</i></h2>
+          <p class="ticket-note">Just kidding—in the best way. This is a demo reservation; no ticket was purchased.</p>
+          <button type="button" class="reserve" (click)="ticketOpen = false">SEE YOU AFTER DARK</button>
+        } @else {
+          <h2 id="ticket-title">Choose your<br><i>night.</i></h2>
+          <p class="selected-event">{{ selectedEvent }}</p>
+          <div class="ticket-choice"><div><strong>GENERAL ADMISSION</strong><span>2 nights / one unforgettable weekend</span></div><b>$129</b></div>
+          <div class="ticket-quantity"><span>HOW MANY?</span><div><button type="button" aria-label="Remove one ticket" [disabled]="ticketCount === 1" (click)="changeTicketCount(-1)">−</button><strong>{{ ticketCount }}</strong><button type="button" aria-label="Add one ticket" [disabled]="ticketCount === 6" (click)="changeTicketCount(1)">+</button></div></div>
+          <p class="ticket-note">Portfolio demo only. No charge, booking, or real ticket.</p>
+          <button type="button" class="reserve" (click)="reservationComplete = true">RESERVE DEMO TICKETS · ${{ ticketCount * 129 }}</button>
+        }
+      </section>
+    </div>
+  }
+</main>

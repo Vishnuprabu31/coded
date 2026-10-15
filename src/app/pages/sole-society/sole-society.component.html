@@ -1,0 +1,80 @@
+<main class="sole">
+  <div class="announcement">COMPLIMENTARY SHIPPING ON ORDERS OVER $150 <span>—</span> MADE FOR THE LONG WAY HOME.</div>
+  <header class="header">
+    <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="sole-nav" [attr.aria-expanded]="menuOpen" (click)="menuOpen = !menuOpen">☰</button>
+    <nav id="sole-nav" [class.open]="menuOpen" aria-label="Main navigation">
+      <a href="#shop" (click)="menuOpen = false">SHOP ALL</a><a href="#story" (click)="menuOpen = false">OUR APPROACH</a>
+    </nav>
+    <a class="logo" routerLink="/">SOLE SOCIETY<span>®</span></a>
+    <button class="bag-button" type="button" (click)="bagOpen = true">BAG <span>({{ bag.length }})</span></button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="kicker">GOOD FORM. BETTER FEEL.</span>
+      <h1>Go your<br><i>own way.</i></h1>
+      <p>Considered sneakers for wherever the day takes you. Made to move, made to last, never made to sit still.</p>
+      <a class="shop-cta" href="#shop">MEET YOUR NEXT PAIR <span>↘</span></a>
+      <span class="hero-caption">01 / THE PACE RUNNER — IN MOSS</span>
+    </div>
+    <div class="hero-photo" role="img" aria-label="Sculptural pair of modern sneakers on a warm studio floor"></div>
+    <span class="hero-number">S/S 26</span>
+  </section>
+
+  <section class="shop" id="shop">
+    <div class="section-top"><div><span class="kicker">THE LINEUP</span><h2>Good shoes.<br><i>Good miles.</i></h2></div><p>FOUR DESIGNS. ALL DAY COMFORT.<br>BUILT WITH BETTER MATERIALS.</p></div>
+    <div class="filters" aria-label="Filter shoes">
+      @for (category of categories; track category) {
+        <button type="button" [class.active]="activeCategory === category" (click)="activeCategory = category">{{ category }}</button>
+      }
+      <span>{{ visibleProducts.length }} PAIRS</span>
+    </div>
+    <div class="product-grid">
+      @for (product of visibleProducts; track product.name) {
+        <article class="product">
+          <div class="product-image">
+            <img [src]="'https://images.unsplash.com/' + product.image + '?auto=format&fit=crop&w=900&q=85'" [alt]="product.name + ' sneaker'" loading="lazy">
+            @if (product.category === 'LIMITED') { <span class="tag">SMALL RUN</span> }
+            <button type="button" class="quick-add" [attr.aria-label]="'View ' + product.name + ' details and choose a size'" (click)="openProduct(product)">+</button>
+          </div>
+          <div class="product-meta"><div><h3>{{ product.name }}</h3><span>{{ product.color }}</span></div><strong>${{ product.price }}</strong></div>
+          <button class="product-details-button" type="button" (click)="openProduct(product)">VIEW DETAILS / SIZES ↗</button>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="story" id="story"><span class="kicker">LESS, BUT BETTER.</span><p>Made for the places<br>you <i>haven't</i> been yet.</p><a href="#shop">FIND YOUR PAIR ↗</a></section>
+  <footer><a routerLink="/">OAK&CODE — BACK TO STUDIO</a><span>SOLE SOCIETY® / WALK LIGHTLY.</span></footer>
+
+  @if (bagOpen) {
+    <div class="scrim" (click)="bagOpen = false" (keydown.escape)="bagOpen = false">
+      <section class="bag-panel" role="dialog" aria-modal="true" aria-labelledby="bag-title" (click)="$event.stopPropagation()">
+        <div class="panel-heading"><h2 id="bag-title">Your bag <span>({{ bag.length }})</span></h2><button type="button" aria-label="Close bag" (click)="bagOpen = false">×</button></div>
+        @if (bag.length) {
+          @for (line of bagLines; track line.product.name + line.size) { <p class="bag-line">{{ line.product.name }} <span>SIZE {{ line.size }} · ×{{ quantityFor(line) }}</span></p> }
+          <p class="bag-total">DEMO TOTAL <strong>${{ bagTotal }}</strong></p>
+          <p class="demo-note">A little demo, not a real checkout. Your picks are just for show.</p>
+          <button class="checkout" type="button" (click)="bag = []; bagOpen = false">CLEAR DEMO BAG</button>
+        } @else { <p class="empty-bag">Your next favorite pair goes here.</p><button class="checkout" type="button" (click)="bagOpen = false">KEEP EXPLORING</button> }
+      </section>
+    </div>
+  }
+  @if (selectedProduct; as product) {
+    <div class="scrim" (click)="selectedProduct = null">
+      <section class="product-panel" role="dialog" aria-modal="true" aria-labelledby="product-title" (click)="$event.stopPropagation()">
+        <div class="panel-heading"><h2 id="product-title">{{ product.name }}</h2><button type="button" aria-label="Close product details" (click)="selectedProduct = null">×</button></div>
+        <img class="detail-image" [src]="'https://images.unsplash.com/' + product.image + '?auto=format&fit=crop&w=900&q=85'" [alt]="product.name + ' sneaker'">
+        <p class="detail-color">{{ product.color }} · ${{ product.price }}</p>
+        <p class="detail-description">{{ product.description }}</p>
+        <fieldset class="size-picker"><legend>CHOOSE YOUR SIZE</legend>
+          @for (size of product.sizes; track size) {
+            <button type="button" [class.selected]="selectedSize === size" [attr.aria-pressed]="selectedSize === size" (click)="selectedSize = size">{{ size }}</button>
+          }
+        </fieldset>
+        <button class="checkout" type="button" [disabled]="selectedSize === null" (click)="addToBag()">ADD TO DEMO BAG · ${{ product.price }}</button>
+        @if (selectedSize === null) { <p class="demo-note" role="status">Choose a size to add this pair to your demo bag.</p> }
+      </section>
+    </div>
+  }
+</main>

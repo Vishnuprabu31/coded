@@ -1,0 +1,94 @@
+<main class="offgrid">
+  <div class="drop-banner"><span>DROP 006 / THE OUTSIDE IS OVERRATED</span><span>FREE SHIPPING OVER $100</span></div>
+  <header class="header">
+    <button class="menu-button" type="button" aria-label="Toggle navigation" aria-controls="offgrid-nav" [attr.aria-expanded]="menuOpen" (click)="menuOpen = !menuOpen">☰</button>
+    <a class="logo" routerLink="/">OFFGRID<span>®</span></a>
+    <nav id="offgrid-nav" [class.open]="menuOpen" aria-label="Main navigation"><a href="#shop" (click)="menuOpen = false">SHOP</a><a href="#manifesto" (click)="menuOpen = false">WHY OFFGRID</a></nav>
+    <button class="bag" type="button" (click)="cartOpen = true">BAG [{{ cart.length.toString().padStart(2, '0') }}]</button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-image" role="img" aria-label="Streetwear look shot in a concrete city setting"><span class="hero-stamp">O/G<br>EST. MMXX</span><span class="image-caption">NO SIGNAL. NO PROBLEM.</span></div>
+    <div class="hero-copy"><span class="kicker">NOT BUILT FOR EVERYONE.</span><h1>Dress<br>like you<br><span>mean it.</span></h1><p>Uniform for the unbothered. Independent streetwear for taking the long way.</p><a href="#shop">SHOP DROP 006 <span>↘</span></a><span class="drop-number">ISSUE 06<br>NEW YORK / EVERYWHERE</span></div>
+  </section>
+
+  <div class="ticker"><span>OUTSIDE THE LINES&nbsp;✳&nbsp;KEEP YOUR OWN TIME&nbsp;✳&nbsp;NO SIGNAL NO PROBLEM&nbsp;✳&nbsp;OUTSIDE THE LINES&nbsp;✳&nbsp;KEEP YOUR OWN TIME&nbsp;✳&nbsp;</span></div>
+
+  <section class="shop" id="shop">
+    <div class="shop-head"><div><span class="kicker">NEW DROP / 006</span><h2>WEAR IT<br><i>YOUR WAY.</i></h2></div><span>BUILT FOR THE OFFLINE<br>STATE OF MIND.</span></div>
+    <div class="filters" aria-label="Filter clothing">
+      @for (category of categories; track category) {
+        <button type="button" [class.active]="activeCategory === category" (click)="activeCategory = category">{{ category }}</button>
+      }
+      <span>({{ visibleProducts.length }} ITEMS)</span>
+    </div>
+    <div class="product-grid">
+      @for (product of visibleProducts; track product.name) {
+        <article class="product">
+          <div class="product-image"><img [src]="'https://images.unsplash.com/' + product.image + '?auto=format&fit=crop&w=900&q=85'" [alt]="product.name + ' in ' + product.color" loading="lazy">
+            @if (product.label) { <span class="product-label">{{ product.label }}</span> }
+            <button type="button" [attr.aria-label]="'View ' + product.name + ' details and choose a size'" (click)="openProduct(product)">DETAILS +</button>
+          </div>
+          <div class="product-title"><h3>{{ product.name }}</h3><span>${{ product.price }}</span></div>
+          <p>{{ product.color }} <span>/</span> UNISEX</p>
+        </article>
+      }
+    </div>
+    <section class="lookbook" aria-labelledby="lookbook-title">
+      <div class="lookbook-heading"><span class="kicker">OUT THERE / DROP 006</span><h2 id="lookbook-title">FIELD<br>NOTES.</h2><p>Same pieces. Your own direction.</p></div>
+      <div class="lookbook-grid">
+        @for (frame of lookbook; track frame.image; let i = $index) {
+          <button type="button" [attr.aria-label]="'Open lookbook photograph ' + (i + 1)" (click)="selectedLookbookImage = frame.image">
+            <img [src]="'https://images.unsplash.com/' + frame.image + '?auto=format&fit=crop&w=900&q=85'" [alt]="frame.alt" loading="lazy">
+            <span>FIELD NOTE 0{{ i + 1 }} ↗</span>
+          </button>
+        }
+      </div>
+    </section>
+  </section>
+
+  <section class="manifesto" id="manifesto"><div class="manifesto-image" role="img" aria-label="Model wearing independent street style against a city backdrop"></div><div class="manifesto-copy"><span class="kicker">LOG OUT. STEP OUT.</span><h2>Good clothes.<br><i>No dress code.</i></h2><p>Made for the side streets, the late starts, the plans that change. Small runs, considered materials, nothing to prove.</p><a href="#shop">FIND YOUR OFFGRID ↗</a></div></section>
+  <footer><a routerLink="/">OAK&CODE / STUDIO ↗</a><span>BUILT FOR THE IN-BETWEEN.</span><a href="#shop">BACK TO TOP ↑</a></footer>
+
+  @if (cartOpen) {
+    <div class="scrim" (click)="cartOpen = false" (keydown.escape)="cartOpen = false">
+      <section class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cart-title" (click)="$event.stopPropagation()">
+        <div class="cart-heading"><h2 id="cart-title">YOUR BAG <span>[{{ cart.length.toString().padStart(2, '0') }}]</span></h2><button type="button" aria-label="Close bag" (click)="cartOpen = false">×</button></div>
+        @if (cart.length) {
+          @for (line of cart; track $index) { <div class="cart-line"><span>{{ line.product.name }}<small>{{ line.product.color }} / SIZE {{ line.size }}</small></span><strong>${{ line.product.price }}</strong></div> }
+          <div class="cart-total"><span>DEMO TOTAL</span><strong>${{ cartTotal }}</strong></div>
+          <p>This is a static portfolio demo. Nothing will be shipped or charged.</p>
+          <button class="checkout" type="button" (click)="cart = []; cartOpen = false">CLEAR DEMO BAG</button>
+        } @else {
+          <p>Your bag's on airplane mode. Go find something good.</p><button class="checkout" type="button" (click)="cartOpen = false">KEEP EXPLORING</button>
+        }
+      </section>
+    </div>
+  }
+  @if (selectedProduct; as product) {
+    <div class="scrim" (click)="selectedProduct = null">
+      <section class="cart-panel product-panel" role="dialog" aria-modal="true" aria-labelledby="garment-title" (click)="$event.stopPropagation()">
+        <div class="cart-heading"><h2 id="garment-title">{{ product.name }}</h2><button type="button" aria-label="Close product details" (click)="selectedProduct = null">×</button></div>
+        <img class="garment-detail-image" [src]="'https://images.unsplash.com/' + product.image + '?auto=format&fit=crop&w=900&q=85'" [alt]="product.name + ' in ' + product.color">
+        <p class="garment-color">{{ product.color }} · ${{ product.price }}</p>
+        <p class="garment-description">{{ product.description }}</p>
+        <fieldset class="garment-sizes"><legend>SELECT SIZE</legend>
+          @for (size of product.sizes; track size) {
+            <button type="button" [class.selected]="selectedSize === size" [attr.aria-pressed]="selectedSize === size" (click)="selectedSize = size">{{ size }}</button>
+          }
+        </fieldset>
+        <button class="checkout" type="button" [disabled]="!selectedSize" (click)="addToCart()">ADD TO DEMO BAG</button>
+        @if (!selectedSize) { <p role="status">Choose a size before adding this item.</p> }
+        <p>This static demo does not process payments or shipping.</p>
+      </section>
+    </div>
+  }
+  @if (selectedLookbookImage; as image) {
+    <div class="scrim lookbook-viewer" (click)="selectedLookbookImage = null">
+      <section role="dialog" aria-modal="true" aria-label="Lookbook photograph" (click)="$event.stopPropagation()">
+        <button type="button" aria-label="Close lookbook image" (click)="selectedLookbookImage = null">×</button>
+        <img [src]="'https://images.unsplash.com/' + image + '?auto=format&fit=crop&w=1600&q=90'" alt="Expanded OFFGRID lookbook photograph">
+      </section>
+    </div>
+  }
+</main>
